@@ -50,12 +50,13 @@ app.post("/api/chat", async (req, res) => {
   try {
     const stream = client.messages.stream({
       model: "claude-sonnet-5-5",
-      max_tokens: 500,
+      max_tokens: 1500,
       system,
       messages,
     });
     stream.on("text", (t) => res.write(t));
-    await stream.finalMessage();
+    const final = await stream.finalMessage();
+    console.log(final.stop_reason, final.usage);
   } catch (err) {
     res.write("\n[Something went wrong. Please try again.]");
     console.error(err);
